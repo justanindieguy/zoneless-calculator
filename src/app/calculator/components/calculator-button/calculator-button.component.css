@@ -3,5 +3,9 @@ button {
 }
 
 .is-command {
-  @apply bg-indigo-700 bg-opacity-10 hover:bg-opacity-20;
+  @apply bg-indigo-700 bg-opacity-10;
+}
+
+.is-pressed {
+  @apply bg-indigo-800 bg-opacity-20;
 }
