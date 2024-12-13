@@ -1,11 +1,12 @@
 import { CalculatorService } from '@/calculator/services/calculator.service';
+import { CommonModule } from '@angular/common';
 import { Component, computed, inject, viewChildren } from '@angular/core';
 import { CalculatorButtonComponent } from '../calculator-button/calculator-button.component';
 
 @Component({
   selector: 'calculator',
   standalone: true,
-  imports: [CalculatorButtonComponent],
+  imports: [CalculatorButtonComponent, CommonModule],
   templateUrl: './calculator.component.html',
   host: {
     '(document:keyup)': 'handleKeyboardEvent($event)',
