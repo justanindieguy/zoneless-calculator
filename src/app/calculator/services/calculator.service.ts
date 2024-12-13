@@ -1,10 +1,12 @@
 import { Injectable, signal } from '@angular/core';
 
+type Operator = '+' | '-' | 'x' | '÷' | '%';
+
 const numbers = new Set(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']);
 
-const operators = new Set(['+', '-', '*', '/']);
+const operators: Set<Operator> = new Set(['+', '-', 'x', '÷', '%']);
 
-const specialOperators = new Set(['+/-', '%', '.', '=', 'C', 'Backspace']);
+const specialOperators = new Set(['+/-', '.', '=', 'C', 'Backspace']);
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +14,7 @@ const specialOperators = new Set(['+/-', '%', '.', '=', 'C', 'Backspace']);
 export class CalculatorService {
   public resultText = signal<string>('0');
   public subResultText = signal<string>('0');
-  public lastOperator = signal<string>('+');
+  public lastOperator = signal<Operator>('+');
 
   private validInputCharacters = new Set([...numbers, ...operators, ...specialOperators]);
 
@@ -24,8 +26,7 @@ export class CalculatorService {
     }
 
     if (value === '=') {
-      // TODO
-      console.log('Calculate Result');
+      this.calculateResult();
       return;
     }
 
@@ -34,14 +35,16 @@ export class CalculatorService {
       this.subResultText.set('0');
       this.lastOperator.set('+');
 
-      // TODO
-      console.log('Clear');
       return;
     }
 
-    // TODO: Check when negative values are updated.
     if (value === 'Backspace') {
       if (this.resultText() === '0') {
+        return;
+      }
+
+      if (this.resultText().includes('-') && this.resultText().length === 2) {
+        this.resultText.set('0');
         return;
       }
 
@@ -56,8 +59,10 @@ export class CalculatorService {
     }
 
     // Apply operator
-    if (operators.has(value)) {
-      this.lastOperator.set(value);
+    if (operators.has(value as Operator)) {
+      this.calculateResult();
+
+      this.lastOperator.set(value as Operator);
       this.subResultText.set(this.resultText());
       this.resultText.set('0');
       return;
@@ -111,5 +116,37 @@ export class CalculatorService {
       this.resultText.update((text: string) => text + value);
       return;
     }
+  }
+
+  private calculateResult(): void {
+    const number1: number = parseFloat(this.subResultText());
+    const number2: number = parseFloat(this.resultText());
+
+    let result: number = 0;
+
+    switch (this.lastOperator()) {
+      case '+':
+        result = number1 + number2;
+        break;
+      case '-':
+        result = number1 - number2;
+        break;
+      case 'x':
+        result = number1 * number2;
+        break;
+      case '÷':
+        result = number1 / number2;
+        break;
+      case '%':
+        result = number1 * (number2 / 100);
+        break;
+      default:
+        throw new Error('Invalid operator.');
+    }
+
+    const formattedNumber: string = new Intl.NumberFormat('en-US', { maximumSignificantDigits: 3 }).format(result);
+
+    this.resultText.set(formattedNumber);
+    this.subResultText.set('0');
   }
 }
