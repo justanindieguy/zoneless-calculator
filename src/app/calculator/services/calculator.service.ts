@@ -10,15 +10,15 @@ const specialOperators = new Set(['+/-', '%', '.', '=', 'C', 'Backspace']);
   providedIn: 'root',
 })
 export class CalculatorService {
-  public resultText = signal<string>('1234.56');
+  public resultText = signal<string>('0');
   public subResultText = signal<string>('0');
   public lastOperator = signal<string>('+');
 
-  public constructNumber(value: string): void {
-    const validInputCharacters = new Set([...numbers, ...operators, ...specialOperators]);
+  private validInputCharacters = new Set([...numbers, ...operators, ...specialOperators]);
 
+  public constructNumber(value: string): void {
     // Validate input
-    if (!validInputCharacters.has(value)) {
+    if (!this.validInputCharacters.has(value)) {
       console.log('Invalid Input:', value);
       return;
     }
@@ -47,9 +47,10 @@ export class CalculatorService {
 
       if (this.resultText().length === 1) {
         this.resultText.set('0');
+        return;
       }
 
-      this.resultText.update((currentValue: string) => currentValue.slice(0, -1));
+      this.resultText.update((text: string) => text.slice(0, -1));
 
       return;
     }
@@ -62,15 +63,53 @@ export class CalculatorService {
       return;
     }
 
-    // Validate floating point
-    if (value === '.' && !this.resultText().includes('.')) {
-      if (this.resultText() === '0' || this.resultText() === '') {
-        this.resultText.update((currentValue: string) => currentValue + '0.');
-      }
-
+    // Limit characters
+    if (this.resultText().length >= 10) {
+      console.log('Max length reached');
       return;
     }
 
-    this.resultText.update((currentValue: string) => currentValue + '.');
+    // Validate floating point
+    if (value === '.' && !this.resultText().includes('.')) {
+      if (this.resultText() === '0' || this.resultText() === '') {
+        this.resultText.set('0.');
+        return;
+      }
+
+      this.resultText.update((text: string) => text + '.');
+      return;
+    }
+
+    // Handling initial '0' value
+    if (value === '0' && (this.resultText() === '0' || this.resultText() === '-0')) {
+      return;
+    }
+
+    // Change sign
+    if (value === '+/-') {
+      if (this.resultText().includes('-')) {
+        this.resultText.update((text: string) => text.slice(1));
+        return;
+      }
+
+      this.resultText.update((text: string) => '-' + text);
+      return;
+    }
+
+    // Numbers
+    if (numbers.has(value)) {
+      if (this.resultText() === '0') {
+        this.resultText.set(value);
+        return;
+      }
+
+      if (this.resultText() === '-0') {
+        this.resultText.set('-' + value);
+        return;
+      }
+
+      this.resultText.update((text: string) => text + value);
+      return;
+    }
   }
 }
