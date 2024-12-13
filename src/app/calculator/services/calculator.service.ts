@@ -65,10 +65,7 @@ export class CalculatorService {
       if (this.subResultText() !== '0' && this.resultText() !== '0') {
         this.subResultText.set(this.calculateResult());
         this.resultText.set('0');
-
-        if (value !== this.lastOperator()) {
-          this.lastOperator.set(value as Operator);
-        }
+        this.lastOperator.set(value as Operator);
 
         return;
       }
