@@ -26,7 +26,8 @@ export class CalculatorService {
     }
 
     if (value === '=') {
-      this.calculateResult();
+      this.resultText.set(this.calculateResult());
+      this.subResultText.set('0');
       return;
     }
 
@@ -60,11 +61,21 @@ export class CalculatorService {
 
     // Apply operator
     if (operators.has(value as Operator)) {
-      this.calculateResult();
+      if (this.subResultText() !== '0' && this.resultText() !== '0') {
+        this.resultText.set(this.calculateResult());
+        this.subResultText.set(this.resultText());
+        this.resultText.set('0');
+        return;
+      }
 
       this.lastOperator.set(value as Operator);
-      this.subResultText.set(this.resultText());
+
+      if (this.resultText() !== '0') {
+        this.subResultText.set(this.resultText());
+      }
+
       this.resultText.set('0');
+
       return;
     }
 
@@ -118,7 +129,7 @@ export class CalculatorService {
     }
   }
 
-  private calculateResult(): void {
+  private calculateResult(): string {
     const number1: number = parseFloat(this.subResultText());
     const number2: number = parseFloat(this.resultText());
 
@@ -144,9 +155,6 @@ export class CalculatorService {
         throw new Error('Invalid operator.');
     }
 
-    const formattedNumber: string = new Intl.NumberFormat('en-US', { maximumSignificantDigits: 3 }).format(result);
-
-    this.resultText.set(formattedNumber);
-    this.subResultText.set('0');
+    return new Intl.NumberFormat('en-US', { maximumSignificantDigits: 3, useGrouping: false }).format(result);
   }
 }
