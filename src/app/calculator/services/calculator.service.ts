@@ -17,6 +17,7 @@ export class CalculatorService {
   public lastOperator = signal<Operator>('+');
 
   private validInputCharacters = new Set([...numbers, ...operators, ...specialOperators]);
+  private numberFormatter = new Intl.NumberFormat('en-US', { maximumSignificantDigits: 3, useGrouping: false });
 
   public constructNumber(value: string): void {
     // Validate input
@@ -62,9 +63,13 @@ export class CalculatorService {
     // Apply operator
     if (operators.has(value as Operator)) {
       if (this.subResultText() !== '0' && this.resultText() !== '0') {
-        this.resultText.set(this.calculateResult());
-        this.subResultText.set(this.resultText());
+        this.subResultText.set(this.calculateResult());
         this.resultText.set('0');
+
+        if (value !== this.lastOperator()) {
+          this.lastOperator.set(value as Operator);
+        }
+
         return;
       }
 
@@ -155,6 +160,6 @@ export class CalculatorService {
         throw new Error('Invalid operator.');
     }
 
-    return new Intl.NumberFormat('en-US', { maximumSignificantDigits: 3, useGrouping: false }).format(result);
+    return this.numberFormatter.format(result);
   }
 }
