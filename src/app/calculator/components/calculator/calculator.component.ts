@@ -28,8 +28,8 @@ export class CalculatorComponent {
     '/': '÷',
   };
 
-  public handleClick(event: string) {
-    console.log({ key: event });
+  public handleClick(key: string) {
+    this.calculatorService.constructNumber(key);
   }
 
   public handleKeyboardEvent(event: KeyboardEvent) {
