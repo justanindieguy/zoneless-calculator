@@ -4,7 +4,7 @@ type Operator = '+' | '-' | 'x' | '÷' | '%';
 
 const numbers = new Set(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']);
 
-const operators: Set<Operator> = new Set(['+', '-', 'x', '÷', '%']);
+const operators: Set<Operator> = new Set<Operator>(['+', '-', 'x', '÷', '%']);
 
 const specialOperators = new Set(['+/-', '.', '=', 'C', 'Backspace']);
 
@@ -135,7 +135,7 @@ export class CalculatorService {
     const number1: number = parseFloat(this.subResultText());
     const number2: number = parseFloat(this.resultText());
 
-    let result: number = 0;
+    let result = 0;
 
     switch (this.lastOperator()) {
       case '+':
