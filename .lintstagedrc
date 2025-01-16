@@ -1,0 +1,4 @@
+{
+  "**/*{.html,.ts}": ["eslint --fix", "npm run format:files"],
+  "**/*{.js,.json,.css,.scss}": ["npm run format:files"]
+}
