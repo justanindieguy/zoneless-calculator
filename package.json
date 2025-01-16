@@ -9,7 +9,9 @@
     "test": "ng test --no-watch --no-progress --browsers=ChromeHeadless",
     "test:coverage": "ng test --code-coverage",
     "lint": "ng lint",
-    "format": "prettier --config .prettierrc --write ."
+    "format:project": "prettier --config .prettierrc --write .",
+    "format:files": "prettier --config .prettierrc --write",
+    "prepare": "husky"
   },
   "private": true,
   "dependencies": {
@@ -32,12 +34,14 @@
     "angular-eslint": "19.0.2",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.16.0",
+    "husky": "^9.1.7",
     "jasmine-core": "~5.2.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "lint-staged": "^15.4.1",
     "postcss": "^8.4.49",
     "prettier": "3.4.2",
     "prettier-plugin-organize-imports": "^4.1.0",
