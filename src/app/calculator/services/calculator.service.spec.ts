@@ -29,6 +29,14 @@ describe('CalculatorService', () => {
     expect(service.lastOperator()).toBe('+');
   });
 
+  it('should not update resultText when invalid input is entered', () => {
+    service.resultText.set('13');
+
+    // 'a' is not valid input.
+    service.constructNumber('a');
+    expect(service.resultText()).toBe('13');
+  });
+
   it('should update resultText with number input', () => {
     service.constructNumber('1');
     expect(service.resultText()).toBe('1');
@@ -102,5 +110,52 @@ describe('CalculatorService', () => {
     service.constructNumber('0');
 
     expect(service.resultText()).toBe('0.0');
+  });
+
+  it('should substitute the zero character when the current result text is "-0" and a new number is entered', () => {
+    service.resultText.set('-0');
+
+    service.constructNumber('3');
+    expect(service.resultText()).toBe('-3');
+  });
+
+  it('should handle sign change correctly', () => {
+    service.constructNumber('1');
+    service.constructNumber('+/-');
+
+    expect(service.resultText()).toBe('-1');
+    service.constructNumber('+/-');
+    expect(service.resultText()).toBe('1');
+  });
+
+  it('should handle backspace correctly', () => {
+    service.resultText.set('123');
+
+    service.constructNumber('Backspace');
+    expect(service.resultText()).toBe('12');
+
+    service.constructNumber('Backspace');
+    expect(service.resultText()).toBe('1');
+
+    service.constructNumber('Backspace');
+    expect(service.resultText()).toBe('0');
+  });
+
+  it('should do nothing when resultText is already "0" and the backspace is pressed', () => {
+    service.resultText.set('0');
+
+    service.constructNumber('Backspace');
+    expect(service.resultText()).toBe('0');
+  });
+
+  it('should handle max length correctly', () => {
+    for (let i = 0; i < 10; i++) {
+      service.constructNumber('1');
+    }
+
+    expect(service.resultText().length).toBe(10);
+
+    service.constructNumber('1');
+    expect(service.resultText().length).toBe(10);
   });
 });
