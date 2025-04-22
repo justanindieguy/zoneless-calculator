@@ -8,9 +8,9 @@ import { timer } from 'rxjs';
   templateUrl: './calculator-button.component.html',
   styleUrl: './calculator-button.component.css',
   host: {
-    class: 'w-1/4 border-r border-b border-indigo-400',
-    '[class.w-1/4]': '!doubleSize',
-    '[class.w-2/4]': 'doubleSize',
+    class: 'border-r border-b border-indigo-400',
+    '[class.w-1/4]': '!isDoubleSize()',
+    '[class.w-2/4]': 'isDoubleSize()',
   },
 })
 export class CalculatorButtonComponent {
@@ -19,10 +19,6 @@ export class CalculatorButtonComponent {
   public isDoubleSize = input(false, { transform: booleanAttribute });
   public contentValue = viewChild<ElementRef<HTMLButtonElement>>('button');
   public onClick = output<string>();
-
-  get doubleSize(): boolean {
-    return this.isDoubleSize();
-  }
 
   public handleClick(): void {
     if (!this.contentValue()?.nativeElement) {
@@ -35,7 +31,7 @@ export class CalculatorButtonComponent {
   }
 
   public keyboardPressedStyle(key: string): void {
-    if (!this.contentValue) {
+    if (!this.contentValue()) {
       return;
     }
 
